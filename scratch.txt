@@ -1,0 +1,95 @@
+#LINETRACKER
+function swivel direction {
+    turned_degrees: 0
+    while linetracking is white or turned_degrees < 90{
+        turn direction 10 degrees
+        turned_degrees: turned_degrees + 10
+    }
+    if linetracking = black {return black}
+}
+
+repeat until triangle = pressed{
+    skip
+}
+on linetracking
+repeat forever {
+    while linetracking = black{
+        skip
+    }
+    if swivel left = black {
+        go forward
+        }
+    else {
+        turn right 90 degrees //reset angle
+        swivel right
+        go forward
+        }
+}
+
+#LINETRACKER v2
+function swivel direction{
+    turned_degrees: 0
+    repeat until linetracking = black or turned_degrees = 90 {
+        turn direction 10 degrees
+        turned_degrees: turned_degrees + 10
+    }
+    if linetracking = black {return black}
+}
+
+repeat until triangle = pressed{
+    skip
+}
+linetracking on
+repeat forever {
+    while linetracking = black{
+        skip
+    }
+    if swivel left = black {
+        go forward
+        }
+    else {
+        turn right 90 degrees //reset angle
+        swivel right
+        go forward
+        }
+}
+
+#RETHINKING OUR MODEL
+it's more intuitive to consider a robot as a single beast rather than a collection of disparate organs.
+the edison robot is an animal capable of:
+- moving
+- looking ahead and to the sides
+- sensing light above on the left and right
+- looking at one spot on the floor
+- listening for sound
+- listening for IR
+- making sound
+- sending IR signals
+- LEDs to flash
+
+these can be divided into acting and sensing
+acting:
+- moving (takes time)
+- beeping (takes time)
+- flashing LEDs
+- sending IR
+
+sensing:
+- listening for IR
+- listening for sound
+- checking ground color
+- checking for obstacles
+- checking for shadow
+
+we want a syntax that makes it easy to start moving for some time while still doing checks and then stop when the check passes/fails
+
+an intuitive description of line tracking:
+repeat forever{
+start going forward
+if floor is white {
+    start spinning left 90 deg until floor is black 
+    if floor is white{start spinning right until floor is black}
+}
+}
+
+we will make the compiler handle things like turning on the line tracker
