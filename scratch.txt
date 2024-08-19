@@ -59,7 +59,7 @@ it's more intuitive to consider a robot as a single beast rather than a collecti
 the edison robot is an animal capable of:
 - moving
 - looking ahead and to the sides
-- sensing light above on the left and right
+- sensing light above, and on the left, and right
 - looking at one spot on the floor
 - listening for sound
 - listening for IR

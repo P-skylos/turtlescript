@@ -1,5 +1,5 @@
 # turtlescript
- a logo like language for controlling turtle style robots, designed to work with the edison robot
+ a logo like language for controlling turtle style robots, designed to work with the edison robot.
 
 ## Edison Functionality
 - Independant left and right motors
@@ -13,29 +13,55 @@
 - Left and right Light sensors
 - LED and Light sensor on bottom for line tracking
 
-## Example Program
-```
-turn -90 degrees
-forward 10 inches
-left 5 cm
-```
+## Our Model
+A robot can be thought of as a single beast rather than a series of interconnected mechanisms. The Edison robot animal is capable of a set of actions divided into two classes:
 
+Acting:
+- moving (takes time)
+- beeping (takes time)
+- flashing LEDs
+- sending IR
+
+Sensing:
+- listening for IR
+- listening for sound
+- checking ground color
+- checking for obstacles
+- checking for shadow
+
+we want a syntax that makes it easy to start moving for some time while still doing checks and then stop when the check passes/fails since this is often how we describe instructions verbally.
+
+### an intuitive description of line tracking:
+```
+repeat forever{
+start going forward
+if floor is white {
+    start spinning left 90 deg until floor is black 
+    if floor is white{start spinning right until floor is black}
+}
+}
+```
 
 ## Grammar
 ```Program -> Statements / EmptyString
 Statements -> Statement '\n' Statements
             / Statement
-Statement  -> Def / Call / If / Repeat 
+Statement  -> Def / Expression / If / Repeat / start / until
 Block      -> {Statements}
 Expression -> Number 
             / List
             / ID 
             / Expression Op Expression
             / Index
+            / Call
 Index   -> Expression[Expression]
 Op      -> '+'/'-'/'='/'<'/'>'/'*'/'/'
-If      -> 'if' Expression 'then' Block
-Repeat  -> 'repeat' Expression Block
+If      -> 'if' Expression Block
+until   -> Call 'until' Expression
+start   -> 'start' Call
+        /  'start' Call 'until' Expression
+Repeat  -> 'repeat until' Expression Block
+        /  'repeat forever' Block
 Call    -> ID Args / Builtin Args
 Def     -> ID ':' Params Block / Assign
 Assign  -> ID ':' Expression
@@ -62,8 +88,4 @@ We have 4 direction constants and 3 motion commands. Each motion command can tak
 | Right| reverse|
 | Backward||
 
-
-we can also choose to individually activate motors.
-`LEFT_MOTOR off`
-`RIGHT_MOTOR on`
 
