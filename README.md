@@ -1,5 +1,5 @@
 # turtlescript
- a logo like language for controlling turtle style robots, designed to work with the edison robot.
+ a logo like language for controlling turtle style robots, designed to work with the edison robot. The language transpiles to python code in order to take advantage of Edison's python module. Once the transpiled python code is pasted into Edison's online python editor it can be flashed to the robot.
 
 ## Edison Functionality
 - Independant left and right motors
@@ -41,6 +41,7 @@ if floor is white {
 }
 }
 ```
+notice the start statement. The start statement is crucial to usability since it allows us ti make blocking operations like moving non-blocking. A non blocking move allows us to for example beep while moving at a steady pace.
 
 ## Grammar
 ```Program -> Statements / EmptyString

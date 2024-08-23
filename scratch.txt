@@ -93,3 +93,17 @@ if floor is white {
 }
 
 we will make the compiler handle things like turning on the line tracker
+
+line tracker in python:
+while true:
+    #MOTOR on
+    #if on reflective
+        #left motor on right motor off
+
+we have the problem that there doesnt seem to be a way to read the degrees turned from the edison api.
+we would need to either make our own look up table of time to degrees at various speeds
+or we could simply only allow time      
+
+restrictions:
+only one thing per tool can be happening in background
+we only have one countdown timer
