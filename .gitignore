@@ -15,3 +15,8 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+learning peggy/minimal.js
+parser.js
+testminimumcontrol.js
+learning peggy/minimal.js
+minimumcontrol.js
