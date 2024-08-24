@@ -10,7 +10,7 @@ statement
     = nav
 
 nav
-    = 'go' _ D:direction _ I:int {return {type:"go", direction:D, distance:I}}
+    = 'go' _ D:direction _ I:int {return {type:"go", direction:D, duration:I}}
     / 'spin' _ D:direction _ I:int {return {type:"spin", direction:D, duration:I}}
 
 direction
