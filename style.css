@@ -1,0 +1,26 @@
+body{
+    background-color: aliceblue;
+}
+
+.text{
+    height:500px;
+    background-color: antiquewhite;
+    margin: 20px;
+    overflow: scroll;
+    width: 30%;
+    float: left;
+}
+#wrapper::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+.button{
+    background-color: cornflowerblue;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
