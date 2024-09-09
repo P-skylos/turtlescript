@@ -24,3 +24,6 @@ body{
     display: inline-block;
 }
 
+#output{
+    white-space: pre;
+}

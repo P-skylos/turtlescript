@@ -6,14 +6,27 @@
 
 <body>
     <div id="wrapper">
-        <div class="text" id="input" contenteditable=""></div>
+        <div class="text" id="input" contenteditable="">
+            spin left 1 <br>
+            go forward 1<br>
+            hi:<br>
+            go forward 2 <br>
+            stop
+            </div>
         <div class="text" id="output"></div>
     </div>
     <br>
     <div>
+        <a class="button" id="compile" href="/#" onclick="compile_button_handler()">compile to python!</a>
         <a class="button" id="download_ts" href="/#">download turtlescript code!</a>
         <a class="button" id="download_py"href="/#">download python code!</a>
         <a class="button" id="copy"href="/#">copy python code!</a>
     </div>
+    <script src="scopehack.js"></script>       
+    <!-- <script src="parser.js"></script>        -->
+    <script src="mincontrol_transformer.js"></script>       
+    <script src="minimumcontrol.js"></script>   
+    <script src="scopehack2.js"></script>       
     <script src="interface.js"></script>       
+
 </body>

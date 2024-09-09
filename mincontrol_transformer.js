@@ -8,16 +8,26 @@ const DIR_ED =new Map([])
 
 function compile(ast){
     switch(ast.type){
-    case("sequence"):
-        let s1 = compile(ast.left)
-        let s2 = compile(ast.right)
-        return `${s1}\n${s2}`
+    case("block"):
+        let block = "";
+        for (let i = 0; i < ast.list.length; i++) {
+           block = block.concat(compile(ast.list[i])+'\n') 
+        }
+        return  block
         break
     case("go"):
         return compile_go(ast)
         break
     case("spin"):
         return compile_spin(ast)
+        break
+    case("def"):
+        return compile_def(ast)
+        break
+    case("do"):
+        console.log(ast);
+        
+        return `${ast.proc}()`
         break
     }
 }
@@ -59,6 +69,17 @@ function compile_spin(ast){
     return `Ed.Drive(${direction}, Ed.SPEED_5, ${ast.duration})`
 }
 
+function compile_def(ast){
+    let def_string = `def ${ast.label}():`
+    let body = compile(ast.body)
+    lines = body.split("\n")
+    for (let i = 0; i < lines.length; i++) {
+        lines[i] = `\t${lines[i]}`
+    }
+    console.log(lines);
+    
+    return `${def_string}\n${lines.join('\n')}`     
+}
 
 function transform(ast){
 

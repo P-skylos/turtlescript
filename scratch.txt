@@ -107,3 +107,31 @@ or we could simply only allow time
 restrictions:
 only one thing per tool can be happening in background
 we only have one countdown timer
+
+GOTOs
+normally we go from loops to jumps
+while i < 5 {...}
+gets turned into
+
+label1:
+beq i 5 label2
+bgt i 5 label2
+...
+j label1
+label2:
+
+or in a more friendly version
+label
+jump to label2 if i >= 5
+...
+jump to label1
+label2
+
+but gotos are also less structured so we cant just reverse the pattern
+
+well we can but the easy way is ugly
+every label is a function containing all the code after the label
+jumps are now function calls
+we track what variables are used in a function and add those as arguments
+
+we might have the issue of hitting recursion depth on the robots
