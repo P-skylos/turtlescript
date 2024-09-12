@@ -9,7 +9,14 @@ function compile_button_handler(){
     const parse = module.exports.parse
     
     let text = input_box.innerText + '\n'
-    let tree = parse(text)
+    let tree
+    try{
+        tree = parse(text)
+    } catch(e){
+        if (typeof e.format === "function"){
+            console.log(e.format([{source:"minimumcontrol.peggy", text},{source:text, text:text }]))
+        }else{throw e;}
+    }
     let python = compile(tree)
     output_box.innerHTML = python
 }
