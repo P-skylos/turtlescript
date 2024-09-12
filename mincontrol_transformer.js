@@ -24,10 +24,20 @@ function compile(ast){
     case("def"):
         return compile_def(ast)
         break
+    case("assign"):
+        return `${ast.label} = ${compile(ast.val)}`
+        break
     case("do"):
-        console.log(ast);
-        
         return `${ast.proc}()`
+        break
+    case("math"):
+        return compile_math(ast)
+        break
+    case("number"):
+        return `${ast.val}`
+        break
+    case("look up"):
+        return ast.label
         break
     }
 }
@@ -73,12 +83,31 @@ function compile_def(ast){
     let def_string = `def ${ast.label}():`
     let body = compile(ast.body)
     lines = body.split("\n")
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length-1; i++) {
         lines[i] = `\t${lines[i]}`
     }
-    console.log(lines);
-    
     return `${def_string}\n${lines.join('\n')}`     
+}
+
+function compile_math(ast){
+    switch(ast.op){
+        case("pow"):
+        return `(${compile(ast.left)})**(${compile(ast.right)})`
+        break
+        case("div"):
+        return `(${compile(ast.left)})/(${compile(ast.right)})`
+        break
+        case("mult"):
+        return `(${compile(ast.left)})*(${compile(ast.right)})`
+        break
+        case("add"):
+        return `(${compile(ast.left)})+(${compile(ast.right)})`
+        break
+        case("minus"):
+        return `(${compile(ast.left)})-(${compile(ast.right)})`
+        break
+    }
+
 }
 
 function transform(ast){
