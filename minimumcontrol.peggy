@@ -1,56 +1,79 @@
 //TODO gotos and comments
 program = nl* B:block{return B}
 
-block
+block "block"
     = statements:(s:statement nl+{return s})* {return {type:"block", list:statements}}
 
-statement
+statement "statement"
     = nav
     / control
 
-control
+control "flow control"
     = L:label _*':' _* nl+ B:block 'stop' {return {type:"def", label:L, body:B}}
     / L:label _* ':' _* M:math {return {type:"assign", label:L, val:M}}
     / 'do' _* L:label {return {type:"do", proc:L}}
+    / if
+    / repeat
 
-nav
-    = 'go' _* D:direction _* I:int {return {type:"go", direction:D, duration:I}}
-    / 'spin' _* D:direction _* I:int {return {type:"spin", direction:D, duration:I}}
+if "if"
+    = 'if' _* M:math _* 'do'_* S:statement{return{type:'if',condition:M, body:S}}
+    / 'if' _* M:math _* 'do'_* L:label{return {type:"if", condition:M, body:{type:'do', proc:L}}}
 
-direction
+repeat "loop"
+    = 'do' L:label 'until' M:math{return {type:"until", label:L, condition:M}}
+    / 'do' L:label M:math 'times'{return {type:"repeat", label:L, times:M}}
+
+nav "navigation"
+    = 'go' _* D:direction _* M:math {return {type:"go", direction:D, duration:M}}
+    / 'spin' _* D:direction _* M:math {return {type:"spin", direction:D, duration:M}}
+
+direction "direction"
     = $'left'   
     / $'forward'
-    / $'right'
+    / $'right'              
     / $'backward'
 
-math
+math "math"
     = exponential
 
-exponential
+exponential "exponentiation"
     = L:fractional "^" R:exponential {return {type:"math", op:"pow", left:L, right:R}}
     / V:fractional {return V}
 
-fractional
+fractional "division"
     = L:multiplicative "/" R:fractional {return {type:"math", op:"div", left:L, right:R}}
     / V:multiplicative  {return V}                  
 
-multiplicative
+multiplicative "multiplication"
     = L:additive "*" R:multiplicative {return {type:"math", op:"mult", left:L, right:R}}
     / V:additive {return V}
 
-additive
+additive "addition"
     = L:subtractive "+" R:additive {return {type:"math", op:"add", left:L, right:R}}
     / V:subtractive {return V}
 
-subtractive
-    = L:primary "-" R:subtractive {return {type:"math", op:"minus", left:L, right:R}}
+subtractive "subtraction"
+    = L:greater "-" R:subtractive {return {type:"math", op:"minus", left:L, right:R}}
+    / V:greater {return V}
+
+greater "greater than"
+	= L: lesser ">" R:greater {return {type:"math", op:"gt", left:L, right:R}}
+    / V: lesser {return V}
+
+lesser "less than"
+	= L: equal "<" R:lesser {return {type:"math", op:"lt", left:L, right:R}}
+    / V: equal {return V}
+
+equal "equality"
+	= L: primary "=" R:equal {return {type:"math", op:"eq", left:L, right:R}}
     / V:primary {return V}
 
-primary
+primary "number or variable"
     = N:number {return {type:"number", val: N}}
     / L:label {return {type:"look up", label:L}}
+    / "("M:math")"{return M}
 
-number = float/int
+number "number"= float/int
 
 int
     = I:[0-9]+{return Number(I.join(''))}

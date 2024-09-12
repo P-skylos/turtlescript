@@ -39,6 +39,9 @@ function compile(ast){
     case("look up"):
         return ast.label
         break
+    case("if"):
+        return `if ${compile(ast.condition)}:\n\t${compile(ast.body)}`
+        break
     }
 }
 
@@ -105,6 +108,15 @@ function compile_math(ast){
         break
         case("minus"):
         return `(${compile(ast.left)})-(${compile(ast.right)})`
+        break
+        case("gt"):
+        return `(${compile(ast.left)})>(${compile(ast.right)})`
+        break
+        case("lt"):
+        return `(${compile(ast.left)})<(${compile(ast.right)})`
+        break
+        case("eq"):
+        return `(${compile(ast.left)})==(${compile(ast.right)})`
         break
     }
 
