@@ -25,7 +25,7 @@ function compile(ast, counter){
     case("block"):
         let block = "";
         for (let i = 0; i < ast.list.length; i++) {
-           block = block.concat(compile(ast.list[i])+'\n') 
+           block = block.concat(compile(ast.list[i], counter)+'\n') 
         }
         return  block
         break
@@ -39,7 +39,7 @@ function compile(ast, counter){
         return compile_def(ast)
         break
     case("assign"):
-        return `${ast.label} = ${compile(ast.val)}`
+        return `${ast.label} = ${compile(ast.val, counter)}`
         break
     case("do"):
         return `${ast.proc}()`
@@ -54,8 +54,13 @@ function compile(ast, counter){
         return ast.label
         break
     case("if"):
-        return `if ${compile(ast.condition)}:\n\t${compile(ast.body)}`
+        return `if ${compile(ast.condition, counter)}:\n\t${compile(ast.body, counter)}`
         break
+    case("until"):
+        return `while not (${compile(ast.condition, counter)}):\n\t${compile(ast.body, counter)}}`
+        break
+    case("repeat"):
+        return `for i in range(${compile(ast.times, counter)}):\n\t${compile(ast.body, counter)}`
     }
 }
 
@@ -99,11 +104,16 @@ function compile_spin(ast){
 function compile_def(ast){
     let def_string = `def ${ast.label}():`
     let body = compile(ast.body)
-    lines = body.split("\n")
+    body = indent(body)
+    return `${def_string}\n${body}`     
+}
+
+function indent(block){
+    lines = block.split("\n")
     for (let i = 0; i < lines.length-1; i++) {
         lines[i] = `\t${lines[i]}`
     }
-    return `${def_string}\n${lines.join('\n')}`     
+    return lines.join('\n')
 }
 
 function compile_math(ast){
@@ -207,6 +217,18 @@ function check_math(ast,table){
     check_math(ast.left, table)
     check_math(ast.right, table)
     
+}
+
+class Name_counter{
+    prefix = "_"
+    count = 0
+    constructor(_prefix){
+        this.prefix = _prefix
+    }
+    new_name(){
+        this.count = this.count + 1
+        return `${this.prefix}${this.count-1}`
+    }
 }
 
 function transform(ast){
