@@ -17,7 +17,7 @@ function compile_button_handler(){
             console.log(e.format([{source:"minimumcontrol.peggy", text},{source:text, text:text }]))
         }else{throw e;}
     }
-    let python = compile(tree)
+    let python = compile_with_checks(tree)
     output_box.innerHTML = python
 }
 
