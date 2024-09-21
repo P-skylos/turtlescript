@@ -6,7 +6,18 @@ block "block"
 
 statement "statement"
     = nav
+    / communicate
     / control
+
+communicate
+    = beep
+    / light
+
+beep
+    = "beep" {return{type:"beep"}}
+
+light
+    = D:("left"/"right") _* "light" _* S:("on"/"off") {return{type:"light", side:D, state:S}}
 
 control "flow control"
     = L:label _*':' _* nl+ B:block 'stop' {return {type:"def", label:L, body:B}}
@@ -14,6 +25,7 @@ control "flow control"
     / if
     / repeat
     / 'do' _* L:label {return {type:"do", proc:L}}
+    / 'wait' _* M:math {return {type:"wait", time:M}}
 
 if "if"
     = 'if' _* M:math _* 'do'_* S:statement{return{type:'if',condition:M, body:S}}
@@ -70,10 +82,15 @@ equal "equality"
 
 primary "number or variable"
     = N:number {return {type:"number", val: N}}
+    / S:sensor {return S}
     / L:label {return {type:"look up", label:L}}
     / "("M:math")"{return M}
 
-        number "number"= float/int
+sensor
+    = "floor"_*"is"_*C:("white"/"black") {return{type:"sensor", sensor:"line", color:C}}
+    / "object"_*"is"_*D:("left"/"right"/"ahead") {return{type:"sensor", sensor:"obstacle", direction:D}}
+    / "object" {return{type:"sensor", sensor:"obstacle", direction:"anywhere"}}
+    / D:("left"/"right")_*"eye"_*L:("bright"/"dark") {return{type:"sensor", sensor:"light", side:D, level:L}}
 
 number "number"= float/int
 
