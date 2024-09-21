@@ -1,17 +1,5 @@
 
-function compile_with_checks(ast){
-    const symtable =  new Map()
-    try{
-    reference_check(ast, symtable)
-    }catch(e){
-        console.log(e)
-        return e.message
-    }
-    //make a name generator
-    const counter = new Name_counter("_")
-    console.log(counter.new_name())
-    return compile(ast, counter)
-}
+
 
 function compile(ast, counter){
     switch(ast.type){
