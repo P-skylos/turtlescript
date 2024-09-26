@@ -1,5 +1,13 @@
-
-
+function compile_prelude(ast, counter){
+    let ed_setup = `import Ed
+Ed.EdisonVersion = Ed.V3
+Ed.DistanceUnits = Ed.CM
+Ed.Tempo = Ed.TEMPO_MEDIUM`
+    let linetracker = "Ed.LineTrackerLed(Ed.ON)"
+    let light_level = "_LIGHT_THRESHHOLD = Ed.ReadLeftLightLevel()"
+    let program = compile(ast, counter)
+    return `#PREAMBLE\n${ed_setup}\n#CALIBRATION\n${linetracker}\n${light_level}\n#PROGRAM\n${program}`
+}
 
 function compile(ast, counter){
     switch(ast.type){
@@ -42,25 +50,31 @@ function compile(ast, counter){
         break
     case("repeat"):
         return `for i in range(${compile(ast.times, counter)}):\n\t${compile(ast.body, counter)}`
+    case("wait"):
+        return `Ed.TimeWait(${compile(ast.time, counter)}, Ed.TIME_SECONDS)`
+        break
+    case("sensor"):
+        return compile_sensor(ast)
+        break
     }
 }
 
 function compile_go(ast){
     switch(ast.direction){
         case("forward"):
-            return `Ed.DRIVE(Ed.FORWARD, Ed.SPEED_5, ${ast.duration})`
+            return `Ed.Drive(Ed.FORWARD, Ed.SPEED_5, ${compile(ast.duration)})`
             break
         case("backward"):
-            return `Ed.DRIVE(Ed.BACKWARD, Ed.SPEED_5, ${ast.duration})`
+            return `Ed.Drive(Ed.BACKWARD, Ed.SPEED_5, ${compile(ast.duration)})`
             break
         case("left"):
             spin = compile_spin({type:"spin", direction:"left", duration:90})
-            forward = `Ed.DRIVE(Ed.FORWARD, Ed.SPEED_5, ${ast.duration})`
+            forward = `Ed.Drive(Ed.FORWARD, Ed.SPEED_5, ${compile(ast.duration)})`
             return `${spin}\n${forward}`
             break
         case("right"):
             spin = compile_spin({type:"spin", direction:"right", duration:90})
-            forward = `Ed.DRIVE(Ed.FORWARD, Ed.SPEED_5, ${ast.duration})`
+            forward = `Ed.Drive(Ed.FORWARD, Ed.SPEED_5, ${compile(ast.duration)})`
             return `${spin}\n${forward}`
             break
     }
@@ -79,7 +93,7 @@ function compile_spin(ast){
         default:
             throw new Error(`spin direction "${ast.direction}" is undefined`)
     }
-    return `Ed.Drive(${direction}, Ed.SPEED_5, ${ast.duration})`
+    return `Ed.Drive(${direction}, Ed.SPEED_5, ${compile(ast.duration)})`
 }
 
 function compile_def(ast){
@@ -123,8 +137,52 @@ function compile_math(ast){
         case("eq"):
         return `(${compile(ast.left)})==(${compile(ast.right)})`
         break
+        default:
+        return compile(ast)
+        break
     }
+}
 
+function compile_sensor(ast){
+    switch(ast.sensor){
+        case("line"):
+            if (ast.color === "black"){
+                return `(Ed.ReadLineState() == Ed.LINE_ON_BLACK)`
+            }
+            if (ast.color === "white"){
+                return `(Ed.ReadLineState() == Ed.LINE_ON_WHITE)`
+            }
+        break
+        case("obstacle"):
+            let activate = "Ed.ObstacleDetectionBeam(Ed.ON)"
+            let detect = ""
+            switch(ast.direction){
+                case("left"):
+                detect = `(Ed.ReadObstacleDetection()==Ed.OBSTACLE_LEFT)`
+                break
+                case("right"):
+                detect = `(Ed.ReadObstacleDetection()==Ed.OBSTACLE_RIGHT)`
+                break
+                case("anywhere"):
+                detect = `(Ed.ReadObstacleDetection()>Ed.OBSTACLE_NONE)`
+                break
+            }
+            return `${activate}\n${detect}`
+        break
+        case("light"):
+            let read = ""
+            if(ast.side==="left"){
+                read = `Ed.ReadLeftLightLevel()`
+            }
+            if(ast.side==="right"){
+                read = `Ed.ReadRightLightLevel()`
+            }
+            let compare = ""
+            if(ast.level==="bright"){compare=">"}
+            if(ast.level==="dark"){compare="<"}
+            return `(${read} ${compare} _LIGHT_THRESHHOLD)` //threshhold set at beginning
+        break
+    }
 }
 
 class Name_counter{

@@ -36,5 +36,5 @@ function compile_with_checks(ast){
     //make a name generator
     const counter = new Name_counter("_")
     console.log(counter.new_name())
-    return compile(ast, counter)
+    return compile_prelude(ast, counter)
 }   

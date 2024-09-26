@@ -50,6 +50,8 @@ function reference_check(ast, table){ //table is an empty map object
             check_math(ast.times, table)
             reference_check(ast.body, table)
             break
+        default:
+            break
         }
     return table
 }
@@ -65,7 +67,7 @@ function check_math(ast,table){
         }
         return
     }  
-    if (ast.type == "number"){return}
+    if (ast.type === "number" || ast.type === "sensor"){return}
     check_math(ast.left, table)
     check_math(ast.right, table)
     
