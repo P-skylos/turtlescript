@@ -5,4 +5,4 @@ test-min: minimumcontrol.js
 	node testminimumcontrol.js
 
 %.js: %.peggy
-	npx peggy $<
+	npx peggy $< --format globals -e PARSER
