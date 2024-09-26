@@ -6,7 +6,6 @@ const compile_button = document.getElementById("compile")
 // button events
 function compile_button_handler(){
     console.log("compile press");
-    // const parse = module.exports.parse
     const parse = PARSER.parse
     let text = input_box.innerText + '\n'
     let tree
