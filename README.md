@@ -1,6 +1,8 @@
 # turtlescript
  a logo like language for controlling turtle style robots, designed to work with the edison robot. The language transpiles to python code in order to take advantage of Edison's python module. Once the transpiled python code is pasted into Edison's online python editor it can be flashed to the robot.
 
+ use it at (https://p-skylos.github.io/turtlescript/)   
+
 ## Edison Functionality
 - Independant left and right motors
 - Microphone (can hear the motors running)
