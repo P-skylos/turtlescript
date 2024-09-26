@@ -18,6 +18,7 @@ beep
 
 light
     = D:("left"/"right") _* "light" _* S:("on"/"off") {return{type:"light", side:D, state:S}}
+    / "lights" _* S:("on"/"off") {return{type:"light", side:"both", state:S}}
 
 control "flow control"
     = L:label _*':' _* nl+ B:block 'stop' {return {type:"def", label:L, body:B}}

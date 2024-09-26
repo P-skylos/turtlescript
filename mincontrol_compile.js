@@ -56,6 +56,12 @@ function compile(ast, counter){
     case("sensor"):
         return compile_sensor(ast)
         break
+    case("beep"):
+        return "Ed.PlayBeep()"
+        break
+    case("light"):
+        return compile_lights(ast)
+        break
     }
 }
 
@@ -182,6 +188,20 @@ function compile_sensor(ast){
             if(ast.level==="dark"){compare="<"}
             return `(${read} ${compare} _LIGHT_THRESHHOLD)` //threshhold set at beginning
         break
+    }
+}
+
+function compile_lights(ast){
+    let state = ""
+    if (ast.state === "on"){state="Ed.ON"}
+    else{state="Ed.OFF"}
+    switch(ast.side){       
+        case("left"):
+            return `Ed.LeftLed(${state})`
+        case("right"):
+            return `Ed.RightLed(${state})`
+        case("both"):
+            return `Ed.RightLed(${state})\nEd.LeftLed(${state})`
     }
 }
 
