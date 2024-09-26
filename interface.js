@@ -22,7 +22,25 @@ function compile_button_handler(){
 }
 
 function copy_button_handler(){
-    navigator.clipboard.writeText(output_box.innerText)
+    navigator.clipboard.writeText(output_box.innerHTML)
+}
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
+function download_python(){
+    download("EdPy", input_box.innerText)
+}
+
+function download_turtle(){
+    download("TurtleScript", output_box.innerText)
 }
 
 function compile_with_checks(ast){
