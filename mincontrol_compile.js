@@ -97,7 +97,7 @@ function compile_spin(ast){
             direction = "Ed.SPIN_RIGHT"
             break
         default:
-            throw new Error(`spin direction "${ast.direction}" is undefined`)
+            throw new Error(`spin direction "${ast.direction}" is undefined, try spin right or spin left`)
     }
     return `Ed.Drive(${direction}, Ed.SPEED_5, ${compile(ast.duration)})`
 }
