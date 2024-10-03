@@ -1,94 +1,115 @@
 # turtlescript
- a logo like language for controlling turtle style robots, designed to work with the edison robot. The language transpiles to python code in order to take advantage of Edison's python module. Once the transpiled python code is pasted into Edison's online python editor it can be flashed to the robot.
+ a logo and MIPS inspired language for controlling turtle style robots, designed to work with the edison robot. The language transpiles to python code in order to take advantage of Edison's python module. Once the transpiled python code is pasted into Edison's online python editor it can be flashed to the robot.
 
- use it at (https://p-skylos.github.io/turtlescript/)   
+ use it at (https://p-skylos.github.io/turtlescript/)  
 
-## Edison Functionality
-- Independant left and right motors
-- Microphone (can hear the motors running)
-- Beeper
-- IR sensor
-    - used for receiving IR codes
-    - used for detecting obstacles
-- IR LED on top of robot for sending IR codes
-- Left and right LEDs
-- Left and right Light sensors
-- LED and Light sensor on bottom for line tracking
+Statements are new line terminated and executed in sequence.
 
-## Our Model
-A robot can be thought of as a single beast rather than a series of interconnected mechanisms. The Edison robot animal is capable of a set of actions divided into two classes:
-
-Acting:
-- moving (takes time)
-- beeping (takes time)
-- flashing LEDs
-- sending IR
-
-Sensing:
-- listening for IR
-- listening for sound
-- checking ground color
-- checking for obstacles
-- checking for shadow
-
-we want a syntax that makes it easy to start moving for some time while still doing checks and then stop when the check passes/fails since this is often how we describe instructions verbally.
-
-### an intuitive description of line tracking:
+# Movement Commands
+## Go
 ```
-repeat forever{
-start going forward
-if floor is white {
-    start spinning left 90 deg until floor is black 
-    if floor is white{start spinning right until floor is black}
-}
-}
+go <direction> <math>
 ```
-notice the start statement. The start statement is crucial to usability since it allows us ti make blocking operations like moving non-blocking. A non blocking move allows us to for example beep while moving at a steady pace.
+where `<direction>` can be any of:
+- `forward`
+- `backward`
+- `left`
+- `right`
 
-## Grammar
-```Program -> Statements / EmptyString
-Statements -> Statement '\n' Statements
-            / Statement
-Statement  -> Def / Expression / If / Repeat / start / until
-Block      -> {Statements}
-Expression -> Number 
-            / List
-            / ID 
-            / Expression Op Expression
-            / Index
-            / Call
-Index   -> Expression[Expression]
-Op      -> '+'/'-'/'='/'<'/'>'/'*'/'/'
-If      -> 'if' Expression Block
-until   -> Call 'until' Expression
-start   -> 'start' Call
-        /  'start' Call 'until' Expression
-Repeat  -> 'repeat until' Expression Block
-        /  'repeat forever' Block
-Call    -> ID Args / Builtin Args
-Def     -> ID ':' Params Block / Assign
-Assign  -> ID ':' Expression
-Args    -> Arg Args / Arg
-Arg     -> Expression / UnitVal
-UnitVal -> Expression Unit
-List    -> [Items]
-Items   -> Item ',' Items / Item
-Unit    -> hertz
-        / seconds
-        / centimeters
-        / inches
-        / degrees
+and `<math>` is any number or equation
 
+## Spin
 ```
-### Navigation
-We have 4 direction constants and 3 motion commands. Each motion command can take either a constant or a numerical argument of type degrees.
+spin <direction> <math>
+```
+where `<direction>` is either `left` or `right` and math is any number or equation.
 
----
-|constants|commands|
-|---|---|
-| Forward |go |
-| Left    |turn|
-| Right| reverse|
-| Backward||
+# Communication
+## LED
+```
+<left/right> light <on/off>
+lights <on/off>
+```
+## Beep
+```
+beep
+```
 
+# Sensor Reading
+Sensor readings are treated as boolean values.
+## Floor
+```
+floor is <white/black>
+```
+The robot is calibrated so the surface the floor sensor is above when the robot turns on is set as `white` any surface darker than that starting surface is considered `black` and any surface lighter is considered `white`.
 
+## Light Level
+```
+<left/right> eye <bright/dark>
+```
+like the line tracker, the light level is calibrated at start up, anything brighter than the initial light level in the left light sensor is considered `bright`, and anything darker is considered `dark`
+
+## Obstacle Detection
+```
+object is <left/right/ahead>
+object
+```
+use `object` to check if there is an obstacle anywhere near by and `object is ...` to check a specific direction.
+
+# Programming Structures
+## Time Delay
+```
+wait <math>
+```
+do nothing for a number of seconds, determined by the arithmetic in `<math>`
+## Variable Assignment
+```
+<variable_name>:<math>
+```
+assigns a number to a variable
+
+## Conditionals
+```
+if <math> do <statement/call>
+```
+We exploit Python's truthiness feature thus any math that results in a non-zero positive is treated as true.
+some examples
+```
+if floor is white do spin left 1
+if object is ahead do turn_around
+```
+
+## Procedures
+these are implemented as functions that don't have a return value
+### Definition
+code inside a procedure definition is not run until the procedure is called
+```
+<procedure_name>:
+<code>
+stop
+```
+### Calling
+```
+do <procedure_name>
+```
+## Loops
+### Until
+```
+do <procedure>  until <math>
+```
+### Times
+```
+do <procedure> <math> times
+```
+
+# Arithmetic
+## Operators
+- `^` power
+- `/` division
+- `*` multiplication
+- `+` addition
+- `-` subtraction
+## Booleans
+- `>` greater than
+- `<` less than
+- `=` equal to
